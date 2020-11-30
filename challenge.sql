@@ -16,7 +16,7 @@
 -- You can uncomment this for testing, but leave it commented out
 -- when you submit your script. The system will set this variable to 
 -- various target words when scoring your query.
-SET @word = 'Recieve';
+-- SET @word = 'Recieve';
 
 
 -- Here is a very basic approach (removing double m's) that returns
@@ -61,40 +61,3 @@ SET @word = 'Recieve';
 SELECT * FROM cte
 WHERE dist <= 3;
 
-
-/*
- SELECT id, misspelled_word
- FROM(
-  SELECT id, misspelled_word, SUBSTR(SOUNDEX(@word),2,4), LOCATE(SUBSTR(SOUNDEX(@word),2,4), SOUNDEX(misspelled_word))
-   FROM word
-   WHERE SOUNDEX(misspelled_word) = SOUNDEX(@word)
-      OR LOCATE(SUBSTR(SOUNDEX(@word),2,4), SOUNDEX(misspelled_word)) >0
-      ) AS T
-WHERE LEVENSHTEIN(misspelled_word, @word) <= 2;
-*/
-
-/*
-SELECT id, 
-       misspelled_word, SOUNDEX(misspelled_word) AS se, 
-       SOUNDEX(REGEXP_REPLACE(misspelled_word, '(ed|ing|s)$', '')) AS new_se,
-       SOUNDEX(REGEXP_REPLACE(@word, '(ed|ing|s)$', '')) AS word_se,
-       SUBSTR(SOUNDEX(misspelled_word),2,4) AS sub
-  FROM word
-  WHERE LEFT(misspelled_word,3) = LEFT(@word,3);
-  
-  SELECT id, misspelled_word, SOUNDEX(misspelled_word) AS se
-  FROM word
-  WHERE misspelled_word REGEXP '(ed|ing|s)$';
-  */
-  
-  /*
-  ROUND 1:
-SELECT id, misspelled_word
-  FROM word 
- WHERE misspelled_word SOUNDS LIKE @word; -- 0 secs
- -- REPLACE(misspelled_word, 'mm', 'm') = REPLACE(@word, 'mm', 'm');
- 
- SELECT id, misspelled_word
-  FROM word 
- WHERE dm(misspelled_word) = dm(@word); -- 432, 1.095
- */
