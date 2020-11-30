@@ -16,48 +16,28 @@
 -- You can uncomment this for testing, but leave it commented out
 -- when you submit your script. The system will set this variable to 
 -- various target words when scoring your query.
--- SET @word = 'Recieve';
+SET @word = 'immediately';
 
-
--- Here is a very basic approach (removing double m's) that returns
--- 2 of the 6 variants in the sample database when searching for 
 -- 'immediately'.
--- SELECT * FROM word WHERE SUBSTR(misspelled_word,1,2) LIKE 'un%'; -- un or in 
- 
- 
+-- 'pumpkin'
+-
+-- SELECT *
+-- ld_ratio(@word, misspelled_word) AS ratio,
+-- ld(@word,misspelled_word) AS dist,
+-- dm(@word),dm(misspelled_word),
+-- SOUNDEX(misspelled_word)
 
- WITH cte AS
- (
- SELECT *, 
-		CASE WHEN misspelled_word = @word THEN 0
-             -- WHEN c_se = s_se THEN 0
-			WHEN LEFT(dm(c_short),2) != LEFT(dm(s_short),2) THEN 200
-            WHEN RIGHT(dm(c_short),1) != RIGHT(dm(s_short),1) THEN 200
-            WHEN RIGHT(c_short,3) = RIGHT(s_short,3) THEN LEVENSHTEIN(misspelled_word,@word)
-            WHEN RIGHT(c_short,2) = RIGHT(s_short,2) THEN LEVENSHTEIN(misspelled_word,@word)
-            WHEN LEFT(c_short,4) = LEFT(s_short,4) THEN LEVENSHTEIN(misspelled_word,@word)
-            WHEN LEFT(c_short,3) = LEFT(s_short,3) THEN LEVENSHTEIN(misspelled_word,@word)
-            WHEN LEFT(c_short,2) = LEFT(s_short,2) THEN LEVENSHTEIN(misspelled_word,@word)
-			-- WHEN new_c_se = new_s_se AND dm(c_short) = dm(s_short) THEN 0
-			-- WHEN LEFT(misspelled_word,3) = LEFT(@word,3) THEN LEVENSHTEIN(misspelled_word,@word)
-			 -- WHEN RIGHT(c_short,2) != RIGHT(s_short,2) THEN LEVENSHTEIN(misspelled_word,@word)
-             -- WHEN dm(misspelled_word) = dm(@word) THEN LEVENSHTEIN(misspelled_word,@word)
-			 ELSE 400
-		 END AS dist
-         -- dm(c_short),
-		 -- dm(s_short)
- FROM(
-  SELECT id, misspelled_word, 
-  -- SOUNDEX(misspelled_word) AS c_se, 
-  -- SOUNDEX(@word) AS s_se, 
-  REGEXP_REPLACE(misspelled_word, '(ed|ing|s)$', '') AS c_short,
-  REGEXP_REPLACE(@word, '(ed|ing|s)$', '') AS s_short
-   FROM word
-   WHERE SUBSTR(SOUNDEX(misspelled_word),2,3) LIKE SUBSTR(SOUNDEX(@word),2,3)
-      OR LEFT(@word,3) LIKE LEFT(misspelled_word,3)
-      OR RIGHT(REGEXP_REPLACE(@word, '(ed|ing|s)$', ''),3) LIKE RIGHT(REGEXP_REPLACE(misspelled_word, '(ed|ing|s)$', ''),3)
-      ) AS T
-)
-SELECT * FROM cte
-WHERE dist <= 3;
 
+SELECT * -- , ld(dm(@word),dm(misspelled_word)), ld_ratio(@word,misspelled_word) AS ratio
+FROM word AS w
+WHERE id IN (
+WITH cte_sel AS
+( SELECT *, ld(dm(@word),dm(misspelled_word)) AS dm_dist
+    FROM (SELECT * FROM word WHERE ABS(CHAR_LENGTH(SOUNDEX(misspelled_word))  - CHAR_LENGTH(SOUNDEX(@word))) <= 2) AS T
+	WHERE SUBSTR(SOUNDEX(misspelled_word),2,2) LIKE SUBSTR(SOUNDEX(@word),2,2)
+    OR LEFT(SOUNDEX(misspelled_word),2) LIKE LEFT(SOUNDEX(@word),2)
+	OR LEFT(@word,2) LIKE LEFT(misspelled_word,2)
+    )
+SELECT (SELECT id FROM cte_sel WHERE cte_sel.id = L.id AND cte_sel.dm_dist <2) AS id 
+FROM cte_sel AS L)
+AND ld_ratio(@word,misspelled_word) > 80;

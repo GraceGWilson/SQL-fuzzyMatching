@@ -1,71 +1,96 @@
--- Levenshtein function
--- Source: https://openquery.com.au/blog/levenshtein-mysql-stored-function
--- Levenshtein reference: http://en.wikipedia.org/wiki/Levenshtein_distance
-
--- Arjen note: because the levenshtein value is encoded in a byte array, distance cannot exceed 255;
--- thus the maximum string length this implementation can handle is also limited to 255 characters.
-
+/*
+DROP FUNCTION IF EXISTS ld_1;
 DELIMITER $$
-DROP FUNCTION IF EXISTS LEVENSHTEIN $$
-CREATE FUNCTION LEVENSHTEIN(s1 VARCHAR(255) CHARACTER SET utf8, s2 VARCHAR(255) CHARACTER SET utf8)
+CREATE FUNCTION ld_1 (s1 VARCHAR( 255 ) , s2 VARCHAR( 255 )) 
+RETURNS TINYINT( 1 ) DETERMINISTIC
+BEGIN
+    DECLARE s1_len, s2_len, i INT;
+    SET s1_len = CHAR_LENGTH(s1), s2_len = CHAR_LENGTH(s2), i = 1;
+    IF s1 = s2 THEN
+        RETURN TRUE;
+    ELSEIF ABS(s1_len - s2_len) > 1 THEN
+        RETURN FALSE;
+    ELSE
+        WHILE SUBSTRING(s1,s1_len - i,1) = SUBSTRING(s2,s2_len - i,1) DO
+            SET i = i + 1;
+        END WHILE;
+        RETURN SUBSTRING(s1,1,s1_len-i) = SUBSTRING(s2,1,s2_len-i) OR SUBSTRING(s1,1,s1_len-i) = SUBSTRING(s2,1,s2_len-i+1) OR SUBSTRING(s1,1,s1_len-i+1) = SUBSTRING(s2,1,s2_len-i);
+    END IF;
+END $$
+DELIMITER;
+*/
+
+DROP FUNCTION IF EXISTS ld;
+DELIMITER $$
+CREATE FUNCTION ld( s1 VARCHAR(255), s2 VARCHAR(255))
   RETURNS INT
   DETERMINISTIC
   BEGIN
-    DECLARE s1_len, s2_len, i, j, c, c_temp, cost INT;
-    DECLARE s1_char CHAR CHARACTER SET utf8;
-    -- max strlen=255 for this function
+    DECLARE s1_len, s2_len, i, j, c, cmin, c_temp, cost INT;
+    DECLARE s1_char CHAR;
+    -- max strlen=255
     DECLARE cv0, cv1 VARBINARY(256);
-
-    SET s1_len = CHAR_LENGTH(s1),
-        s2_len = CHAR_LENGTH(s2),
-        cv1 = 0x00,
-        j = 1,
-        i = 1,
-        c = 0;
-
-    IF (s1 = s2) THEN
-      RETURN (0);
-    ELSEIF (s1_len = 0) THEN
-      RETURN (s2_len);
-    ELSEIF (s2_len = 0) THEN
-      RETURN (s1_len);
-    END IF;
-
-    WHILE (j <= s2_len) DO
-      SET cv1 = CONCAT(cv1, CHAR(j)),
-          j = j + 1;
-    END WHILE;
-
-    WHILE (i <= s1_len) DO
-      SET s1_char = SUBSTRING(s1, i, 1),
-          c = i,
-          cv0 = CHAR(i),
-          j = 1;
-
-      WHILE (j <= s2_len) DO
-        SET c = c + 1,
-            cost = IF(s1_char = SUBSTRING(s2, j, 1), 0, 1);
-
-        SET c_temp = ORD(SUBSTRING(cv1, j, 1)) + cost;
-        IF (c > c_temp) THEN
-          SET c = c_temp;
-        END IF;
-
-        SET c_temp = ORD(SUBSTRING(cv1, j+1, 1)) + 1;
-        IF (c > c_temp) THEN
-          SET c = c_temp;
-        END IF;
-
-        SET cv0 = CONCAT(cv0, CHAR(c)),
-            j = j + 1;
+    SET s1_len = CHAR_LENGTH(s1), s2_len = CHAR_LENGTH(s2), cv1 = 0x00, j = 1, i = 1, c = 0;
+    IF s1 = s2 THEN
+      RETURN 0;
+    ELSEIF s1_len = 0 THEN
+      RETURN s2_len;
+    ELSEIF s2_len = 0 THEN
+      RETURN s1_len; 
+	ELSEIF s1_len = 1 AND s2_len = 1 AND s1 != s2 THEN
+      RETURN 1;
+    ELSE
+    
+	 WHILE j <= s2_len DO
+		SET cv1 = CONCAT(cv1, UNHEX(HEX(j))), j = j + 1;
+	 END WHILE;
+      
+      WHILE i <= s1_len DO
+        SET s1_char = SUBSTRING(s1, i, 1), c = i, cv0 = UNHEX(HEX(i)), j = 1;
+         
+			WHILE j <= s2_len DO
+			  SET c = c + 1;
+			  IF s1_char = SUBSTRING(s2, j, 1) THEN 
+				SET cost = 0; ELSE SET cost = 1;
+			  END IF;
+              
+			  SET c_temp = CONV(HEX(SUBSTRING(cv1, j, 1)), 16, 10) + cost;
+              
+			  IF c > c_temp THEN SET c = c_temp; 
+			  END IF;
+              
+			  SET c_temp = CONV(HEX(SUBSTRING(cv1, j+1, 1)), 16, 10) + 1;
+			  IF c > c_temp THEN 
+			    SET c = c_temp; 
+			   END IF;
+			   SET cv0 = CONCAT(cv0, UNHEX(HEX(c))), j = j + 1;
+			END WHILE;
+   
+        SET cv1 = cv0, i = i + 1;
       END WHILE;
 
-      SET cv1 = cv0,
-          i = i + 1;
-    END WHILE;
+    END IF;
+    RETURN c;
+  END$$
 
-    RETURN (c);
-  END $$
+DELIMITER ;
+
+
+DROP FUNCTION IF EXISTS ld_ratio;
+DELIMITER $$
+CREATE FUNCTION ld_ratio( s1 VARCHAR(255), s2 VARCHAR(255) )
+  RETURNS INT
+  DETERMINISTIC
+  BEGIN
+    DECLARE s1_len, s2_len, max_len INT;
+    SET s1_len = LENGTH(s1), s2_len = LENGTH(s2);
+    IF s1_len > s2_len THEN 
+      SET max_len = s1_len; 
+    ELSE 
+      SET max_len = s2_len; 
+    END IF;
+    RETURN ROUND((1 - LD(s1, s2) / max_len) * 100);
+  END$$
 
 DELIMITER ;
 
@@ -81,9 +106,7 @@ DELIMITER ;
 --   bug squashing effort. There were many cases where this function wouldn't give the same output
 --   as the original C source that were fixed by his careful attention and excellent communication.
 DELIMITER $$
-
 DROP FUNCTION IF EXISTS `dm` $$
-
 CREATE FUNCTION `dm`(st VARCHAR(55)) RETURNS varchar(128) CHARSET utf8
     NO SQL
 BEGIN
