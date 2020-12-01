@@ -1,6 +1,6 @@
 word,f,precision,recall,retrieved,relevant,total relevant,time
 "mysql: [Warning] Using a password on the command line interface can be insecure.
-ERROR 1064 (42000) at line 23: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '-
+ERROR 1064 (42000) at line 27: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '-
 
 
 
@@ -8,8 +8,10 @@ ERROR 1064 (42000) at line 23: You have an error in your SQL syntax; check the m
 
 
 
-SELECT * 
+SELECT *
+		
+        
+        
 FROM word AS w
 WHERE id IN (
-WITH cte_sel AS
-( SELECT *, ld(d' at line 1"
+WITH cte_sel' at line 1"
