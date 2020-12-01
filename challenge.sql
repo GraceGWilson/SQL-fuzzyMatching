@@ -16,7 +16,7 @@
 -- You can uncomment this for testing, but leave it commented out
 -- when you submit your script. The system will set this variable to 
 -- various target words when scoring your query.
--- SET @word = 'comisions';
+SET @word = 'pumpkin';
 
 -- calculate
 -- comision
@@ -31,7 +31,33 @@
 -- dm(@word),dm(misspelled_word),
 -- SOUNDEX(misspelled_word)
 
+SELECT *,
+		@word,
+        ld(@word, misspelled_word) AS dist,
+		ld_ratio(@word,misspelled_word) AS ratio
+FROM word AS w
+WHERE id IN (
+WITH cte_sel AS
+( SELECT * 
+    FROM (SELECT * 
+			FROM word 
+			WHERE ABS(CHAR_LENGTH(SOUNDEX(misspelled_word))  - CHAR_LENGTH(SOUNDEX(@word))) <= 4
+                -- AND RIGHT(SOUNDEX(misspelled_word),1) = RIGHT(SOUNDEX(@word),1)
+				-- OR SUBSTR(SOUNDEX(misspelled_word),2,1) LIKE SUBSTR(SOUNDEX(@word),2,2)
+            ) AS T
+	WHERE LEFT(SOUNDEX(misspelled_word),1) LIKE LEFT(SOUNDEX(@word),1)
+    OR SUBSTR(SOUNDEX(misspelled_word),1,3) LIKE SUBSTR(SOUNDEX(@word),1,3)
+	OR SUBSTR(SOUNDEX(misspelled_word),2,3) LIKE SUBSTR(SOUNDEX(@word),2,3)
+	OR SUBSTR(SOUNDEX(misspelled_word),3,3) LIKE SUBSTR(SOUNDEX(@word),3,3)
+	)
+SELECT (SELECT id 
+		 FROM cte_sel 
+		 WHERE cte_sel.id = L.id 
+          AND ld_ratio(@word, cte_sel.misspelled_word) > 70) AS id
+FROM cte_sel AS L)
+AND RIGHT(SOUNDEX(misspelled_word),1) LIKE RIGHT(SOUNDEX(@word),1);
 
+/*
 SELECT *,-- , @word,
 		ld(REGEXP_SUBSTR(dm(@word),'^[^;]+'),REGEXP_SUBSTR(dm(misspelled_word),'^[^;]+')), 
         ld_ratio(REGEXP_SUBSTR(dm(@word),'^[^;]+'),REGEXP_SUBSTR(dm(misspelled_word),'^[^;]+')) AS dm_ratio,
@@ -59,7 +85,7 @@ SELECT (SELECT id
           AND ld_ratio(cte_sel.dm_w, cte_sel.dm_ms) > 79
           AND ld_ratio(@word, cte_sel.misspelled_word) > 74) AS id
 FROM cte_sel AS L);
--- AND RIGHT(dm(@word),1) = RIGHT(dm(misspelled_word),1) ;
+*/
 
 /*
 SELECT * FROM word;

@@ -105,26 +105,29 @@ DELIMITER ;
 -- Updated Jun 25, 2010 to fix 16 signifigant bugs - thanks again Nils Johnsson for a spectacular
 --   bug squashing effort. There were many cases where this function wouldn't give the same output
 --   as the original C source that were fixed by his careful attention and excellent communication.
+
+/*
+DROP FUNCTION IF EXISTS dm;
 DELIMITER $$
-DROP FUNCTION IF EXISTS `dm` $$
-CREATE FUNCTION `dm`(st VARCHAR(55)) RETURNS varchar(128) CHARSET utf8
-    NO SQL
+CREATE FUNCTION dm(st VARCHAR(55)) RETURNS varchar(128) CHARSET utf8
+ --   NO SQL
 BEGIN
-	DECLARE length, first, last, pos, prevpos, is_slavo_germanic SMALLINT;
-	DECLARE pri, sec VARCHAR(45) DEFAULT '';
+	DECLARE length, `first`, `last`, pos, prevpos, is_slavo_germanic SMALLINT;
+	DECLARE pri, sec VARCHAR(45);
 	DECLARE ch CHAR(1);
+    SET pri = '', sec='';
 	-- returns the double metaphone code OR codes for given string
 	-- if there is a secondary dm it is separated with a semicolon
 	-- there are no checks done on the input string, but it should be a single word OR name.
 	--  st is short for string. I usually prefer descriptive over short, but this var is used a lot!
-	SET first = 3;
+	SET `first` = 3;
 	SET length = CHAR_LENGTH(st);
 	SET last = first + length -1;
-	SET st = CONCAT(REPEAT('-', first -1), UCASE(st), REPEAT(' ', 5)); --  pad st so we can index beyond the begining AND end of the input string
+	SET st = CONCAT(REPEAT('-', `first` -1), UCASE(st), REPEAT(' ', 5)); --  pad st so we can index beyond the begining AND end of the input string
 	SET is_slavo_germanic = (st LIKE '%W%' OR st LIKE '%K%' OR st LIKE '%CZ%');  -- the check for '%W%' will catch WITZ
 	SET pos = first; --  pos is short for position
 	-- skip these silent letters when at start of word
-	IF SUBSTRING(st, first, 2) IN ('GN', 'KN', 'PN', 'WR', 'PS') THEN
+	IF SUBSTRING(st, `first`, 2) IN ('GN', 'KN', 'PN', 'WR', 'PS') THEN
 		SET pos = pos + 1;
 	END IF;
 	--  Initial 'X' is pronounced 'Z' e.g. 'Xavier'
@@ -567,3 +570,4 @@ BEGIN
 END $$
 
 DELIMITER ;
+*/
