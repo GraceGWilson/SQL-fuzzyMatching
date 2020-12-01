@@ -16,7 +16,7 @@
 -- You can uncomment this for testing, but leave it commented out
 -- when you submit your script. The system will set this variable to 
 -- various target words when scoring your query.
-SET @word = 'accomodate';
+-- SET @word = 'comisions';
 
 -- calculate
 -- comision
@@ -32,30 +32,32 @@ SET @word = 'accomodate';
 -- SOUNDEX(misspelled_word)
 
 
-SELECT *-- , @word,
-		-- ld(REGEXP_SUBSTR(dm(@word),'^[^;]+'),REGEXP_SUBSTR(dm(misspelled_word),'^[^;]+')), 
-        -- ld_ratio(REGEXP_SUBSTR(dm(@word),'^[^;]+'),REGEXP_SUBSTR(dm(misspelled_word),'^[^;]+')) AS dm_ratio,
-        -- ld_ratio(@word,misspelled_word) AS ratio
+SELECT *,-- , @word,
+		ld(REGEXP_SUBSTR(dm(@word),'^[^;]+'),REGEXP_SUBSTR(dm(misspelled_word),'^[^;]+')), 
+        ld_ratio(REGEXP_SUBSTR(dm(@word),'^[^;]+'),REGEXP_SUBSTR(dm(misspelled_word),'^[^;]+')) AS dm_ratio,
+        ld_ratio(@word,misspelled_word) AS ratio
 FROM word AS w
 WHERE id IN (
 WITH cte_sel AS
-( SELECT *, REGEXP_SUBSTR(dm(misspelled_word),'^[^;]+') AS dm_ms,
+( SELECT * , REGEXP_SUBSTR(dm(misspelled_word),'^[^;]+') AS dm_ms,
 			REGEXP_SUBSTR(dm(@word),'^[^;]+') AS dm_w
     FROM (SELECT * 
 			FROM word 
-			WHERE ABS(CHAR_LENGTH(SOUNDEX(misspelled_word))  - CHAR_LENGTH(SOUNDEX(@word))) <= 3
+			WHERE ABS(CHAR_LENGTH(SOUNDEX(misspelled_word))  - CHAR_LENGTH(SOUNDEX(@word))) <= 4
                 -- AND RIGHT(SOUNDEX(misspelled_word),1) = RIGHT(SOUNDEX(@word),1)
 				-- OR SUBSTR(SOUNDEX(misspelled_word),2,1) LIKE SUBSTR(SOUNDEX(@word),2,2)
             ) AS T
 	WHERE LEFT(REGEXP_SUBSTR(dm(misspelled_word),'^[^;]+'),1) LIKE LEFT(REGEXP_SUBSTR(dm(@word),'^[^;]+'),1)
-    OR SUBSTR(REGEXP_SUBSTR(dm(misspelled_word),'^[^;]+'),1,2) LIKE SUBSTR(REGEXP_SUBSTR(dm(@word),'^[^;]+'),1,2)
-	OR SUBSTR(REGEXP_SUBSTR(dm(misspelled_word),'^[^;]+'),2,2) LIKE SUBSTR(REGEXP_SUBSTR(dm(@word),'^[^;]+'),2,2)
-	OR SUBSTR(REGEXP_SUBSTR(dm(misspelled_word),'^[^;]+'),3,2) LIKE SUBSTR(REGEXP_SUBSTR(dm(@word),'^[^;]+'),3,2)
+    OR SUBSTR(REGEXP_SUBSTR(dm(misspelled_word),'^[^;]+'),1,3) LIKE SUBSTR(REGEXP_SUBSTR(dm(@word),'^[^;]+'),1,2)
+	OR SUBSTR(REGEXP_SUBSTR(dm(misspelled_word),'^[^;]+'),2,3) LIKE SUBSTR(REGEXP_SUBSTR(dm(@word),'^[^;]+'),2,2)
+	OR SUBSTR(REGEXP_SUBSTR(dm(misspelled_word),'^[^;]+'),3,3) LIKE SUBSTR(REGEXP_SUBSTR(dm(@word),'^[^;]+'),3,2)
 	)
 SELECT (SELECT id 
 		 FROM cte_sel 
 		 WHERE cte_sel.id = L.id 
-         AND ld_ratio(cte_sel.dm_w, cte_sel.dm_ms) > 80) AS id
+         -- AND ld_ratio(@word, cte_sel.misspelled_word) > 69) AS id
+          AND ld_ratio(cte_sel.dm_w, cte_sel.dm_ms) > 79
+          AND ld_ratio(@word, cte_sel.misspelled_word) > 74) AS id
 FROM cte_sel AS L);
 -- AND RIGHT(dm(@word),1) = RIGHT(dm(misspelled_word),1) ;
 
@@ -76,5 +78,5 @@ ORDER BY ratio DESC;
 
 SELECT *, dm(@word),dm(misspelled_word), REGEXP_SUBSTR(dm(misspelled_word),'^[^;]+') AS new_s
 FROM word
-WHERE misspelled_word LIKE 'c%' ;
+WHERE misspelled_word LIKE 'd%' ;
 */
