@@ -8,7 +8,10 @@ ERROR 1064 (42000) at line 27: You have an error in your SQL syntax; check the m
 
 
 
-SELECT *,
-		@word,
-        ld(@word, misspelled_word) AS dist,
-		ld_rat' at line 1"
+SELECT id, misspelled_word
+		
+        
+		
+FROM word AS w
+WHERE id IN (
+' at line 1"
