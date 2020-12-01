@@ -1,17 +1,3 @@
 word,f,precision,recall,retrieved,relevant,total relevant,time
 "mysql: [Warning] Using a password on the command line interface can be insecure.
-ERROR 1064 (42000) at line 27: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '-
-
-
-
-
-
-
-
-SELECT id, misspelled_word
-		
-        
-		
-FROM word AS w
-WHERE id IN (
-' at line 1"
+ERROR 3024 (HY000) at line 29: Query execution was interrupted, maximum statement execution time exceeded"
