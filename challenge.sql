@@ -16,7 +16,7 @@
 -- You can uncomment this for testing, but leave it commented out
 -- when you submit your script. The system will set this variable to 
 -- various target words when scoring your query.
--- SET @word = 'pumpkin';
+-- SET @word = 'accomodate';
 
 -- calculate
 -- comision
@@ -32,9 +32,9 @@ FROM ( SELECT *
 			  SUBSTR(SOUNDEX(misspelled_word),1,2) = SUBSTR(SOUNDEX(@word),1,2) OR
 			  SUBSTR(SOUNDEX(misspelled_word),2,2) = SUBSTR(SOUNDEX(@word),2,2) OR
 			  SUBSTR(SOUNDEX(misspelled_word),3,2) = SUBSTR(SOUNDEX(@word),3,2) OR
-              SUBSTR(SOUNDEX(misspelled_word),3,2) = SUBSTR(SOUNDEX(@word),4,2)
+              SUBSTR(SOUNDEX(misspelled_word),2,2) = SUBSTR(SOUNDEX(@word),3,2)
 	 ) AS T
-WHERE EXISTS (SELECT id FROM word as w where w.id = t.id AND ld_ratio(@word, misspelled_word) > 75 AND ld(SOUNDEX(@word),SOUNDEX(misspelled_word)) < 2);
+WHERE EXISTS (SELECT id FROM word as w where w.id = t.id AND ld_ratio(@word, misspelled_word) > 75 AND ld(SOUNDEX(@word),SOUNDEX(misspelled_word)) < 3);
  
  -- AND ld(SOUNDEX(@word),SOUNDEX(misspelled_word)) < 2;  
 -- ld_ratio(@word, misspelled_word) > 70; -- ld(@word, misspelled_word) < 3 -- AND ld_ratio(SOUNDEX(@word),SOUNDEX(misspelled_word)) >75)
