@@ -16,7 +16,7 @@
 -- You can uncomment this for testing, but leave it commented out
 -- when you submit your script. The system will set this variable to 
 -- various target words when scoring your query.
-SET @word = 'pumpkin';
+-- SET @word = 'pumpkin';
 
 -- calculate
 -- comision
