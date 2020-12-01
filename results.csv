@@ -8,10 +8,5 @@ ERROR 1064 (42000) at line 27: You have an error in your SQL syntax; check the m
 
 
 
-SELECT *
-		
-        
-        
-FROM word AS w
-WHERE id IN (
-WITH cte_sel' at line 1"
+SELECT *,
+		ld(REGEXP_SUBSTR(dm(@word),'^[^;]+'),REGEXP_SUBSTR(dm(missp' at line 1"
