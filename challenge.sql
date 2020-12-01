@@ -10,13 +10,13 @@
 
 -- You can uncomment this for testing, but leave it commented out
 -- when you submit your script.
--- USE misspellings;
+USE misspellings;
 
 
 -- You can uncomment this for testing, but leave it commented out
 -- when you submit your script. The system will set this variable to 
 -- various target words when scoring your query.
- -- SET @word = 'immediately';
+-- SET @word = 'pumpkin';
 
 -- calculate
 -- comision
@@ -25,37 +25,33 @@
 -- 'immediately'.
 -- 'pumpkin'
 
+SELECT *
+FROM ( SELECT *
+		FROM word 
+		WHERE ABS(CHAR_LENGTH(SOUNDEX(misspelled_word))  - CHAR_LENGTH(SOUNDEX(@word))) <= 2 AND
+			  SUBSTR(SOUNDEX(misspelled_word),1,2) = SUBSTR(SOUNDEX(@word),1,2) OR
+			  SUBSTR(SOUNDEX(misspelled_word),2,2) = SUBSTR(SOUNDEX(@word),2,2) OR
+			  SUBSTR(SOUNDEX(misspelled_word),3,2) = SUBSTR(SOUNDEX(@word),3,2)
+	 ) AS T
+WHERE EXISTS (SELECT id FROM word as w where w.id = t.id AND ld_ratio(@word, misspelled_word) > 75 AND ld(SOUNDEX(@word),SOUNDEX(misspelled_word)) < 2);
+ 
+ -- AND ld(SOUNDEX(@word),SOUNDEX(misspelled_word)) < 2;  
+-- ld_ratio(@word, misspelled_word) > 70; -- ld(@word, misspelled_word) < 3 -- AND ld_ratio(SOUNDEX(@word),SOUNDEX(misspelled_word)) >75)
 
-SELECT id, misspelled_word
+         -- id, 
+		-- misspelled_word
 		-- @word,
         -- ld(@word, misspelled_word) AS dist,
 		-- ld_ratio(@word,misspelled_word) AS ratio,
         -- ld_ratio(SOUNDEX(@word),SOUNDEX(misspelled_word)) AS se_ratio
-FROM word AS w
-WHERE id IN (
-WITH cte_sel AS
-( SELECT *, SOUNDEX(misspelled_word),
-         SOUNDEX(@word),
-         SUBSTR(REVERSE(SOUNDEX(@word)),1,3)
-    FROM (SELECT * 
-			FROM word 
-			WHERE ABS(CHAR_LENGTH(SOUNDEX(misspelled_word))  - CHAR_LENGTH(SOUNDEX(@word))) <= 4
-            ) AS T
-	WHERE -- LEFT(SOUNDEX(misspelled_word),1) = LEFT(SOUNDEX(@word),1)
-    SUBSTR(SOUNDEX(misspelled_word),1,3) = SUBSTR(SOUNDEX(@word),1,3) OR
-    SUBSTR(SOUNDEX(misspelled_word),2,3) = SUBSTR(SOUNDEX(@word),2,3) OR
-    SUBSTR(SOUNDEX(misspelled_word),3,3) = SUBSTR(SOUNDEX(@word),3,3) OR
-    SUBSTR(REVERSE(SOUNDEX(misspelled_word)),1,3) = SUBSTR(REVERSE(SOUNDEX(@word)),1,3) OR
-    SUBSTR(REVERSE(SOUNDEX(misspelled_word)),2,3) = SUBSTR(REVERSE(SOUNDEX(@word)),2,3) OR
-    SUBSTR(REVERSE(SOUNDEX(misspelled_word)),3,3) = SUBSTR(REVERSE(SOUNDEX(@word)),3,3) 
- ) 
-SELECT id
-FROM cte_sel
-WHERE (ld(@word, misspelled_word) < 3 AND ld_ratio(SOUNDEX(@word),SOUNDEX(misspelled_word)) >75) 
-OR ld_ratio(@word, misspelled_word) > 70);
 
- 
-
+	-- WHERE -- LEFT(SOUNDEX(misspelled_word),1) = LEFT(SOUNDEX(@word),1)
+    -- SUBSTR(SOUNDEX(misspelled_word),1,3) = SUBSTR(SOUNDEX(@word),1,3) OR
+    -- SUBSTR(SOUNDEX(misspelled_word),2,3) = SUBSTR(SOUNDEX(@word),2,3) OR
+    -- SUBSTR(SOUNDEX(misspelled_word),3,3) = SUBSTR(SOUNDEX(@word),3,3) OR
+    -- SUBSTR(REVERSE(SOUNDEX(misspelled_word)),1,3) = SUBSTR(REVERSE(SOUNDEX(@word)),1,3) OR
+    -- SUBSTR(REVERSE(SOUNDEX(misspelled_word)),2,3) = SUBSTR(REVERSE(SOUNDEX(@word)),2,3) OR
+    -- SUBSTR(REVERSE(SOUNDEX(misspelled_word)),3,3) = SUBSTR(REVERSE(SOUNDEX(@word)),3,3) 
 
 /*
 SELECT *,-- , @word,
