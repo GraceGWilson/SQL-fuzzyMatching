@@ -32,10 +32,10 @@
 -- SOUNDEX(misspelled_word)
 
 
-SELECT *,
-		@word,
-        ld(@word, misspelled_word) AS dist,
-		ld_ratio(@word,misspelled_word) AS ratio
+SELECT id, misspelled_word
+		-- @word,
+        -- ld(@word, misspelled_word) AS dist,
+		-- ld_ratio(@word,misspelled_word) AS ratio
 FROM word AS w
 WHERE id IN (
 WITH cte_sel AS
