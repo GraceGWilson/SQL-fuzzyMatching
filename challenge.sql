@@ -16,7 +16,7 @@
 -- You can uncomment this for testing, but leave it commented out
 -- when you submit your script. The system will set this variable to 
 -- various target words when scoring your query.
--- SET @word = 'comision';
+ -- SET @word = 'immediately';
 
 -- calculate
 -- comision
@@ -24,51 +24,38 @@
 -- 'accomodate'
 -- 'immediately'.
 -- 'pumpkin'
--
--- SELECT *
--- ld_ratio(@word, misspelled_word) AS ratio,
--- ld(@word,misspelled_word) AS dist,
--- dm(@word),dm(misspelled_word),
--- SOUNDEX(misspelled_word)
 
 
 SELECT id, misspelled_word
 		-- @word,
         -- ld(@word, misspelled_word) AS dist,
-		-- ld_ratio(@word,misspelled_word) AS ratio
+		-- ld_ratio(@word,misspelled_word) AS ratio,
+        -- ld_ratio(SOUNDEX(@word),SOUNDEX(misspelled_word)) AS se_ratio
 FROM word AS w
 WHERE id IN (
 WITH cte_sel AS
-( SELECT * 
+( SELECT *, SOUNDEX(misspelled_word),
+         SOUNDEX(@word),
+         SUBSTR(REVERSE(SOUNDEX(@word)),1,3)
     FROM (SELECT * 
 			FROM word 
 			WHERE ABS(CHAR_LENGTH(SOUNDEX(misspelled_word))  - CHAR_LENGTH(SOUNDEX(@word))) <= 4
             ) AS T
-	WHERE LEFT(SOUNDEX(misspelled_word),1) LIKE LEFT(SOUNDEX(@word),1)
-    OR SUBSTR(SOUNDEX(misspelled_word),1,2) = SUBSTR(SOUNDEX(@word),1,2)
-    OR SUBSTR(SOUNDEX(misspelled_word),2,2) = SUBSTR(SOUNDEX(@word),2,2)
-    OR SUBSTR(SOUNDEX(misspelled_word),3,2) = SUBSTR(SOUNDEX(@word),3,2)
-    OR SUBSTR(SOUNDEX(misspelled_word),1,3) = SUBSTR(SOUNDEX(@word),1,3)
-    OR SUBSTR(SOUNDEX(misspelled_word),2,3) LIKE SUBSTR(SOUNDEX(@word),2,3)
-	OR SUBSTR(SOUNDEX(misspelled_word),3,3) LIKE SUBSTR(SOUNDEX(@word),3,3)
-	)
-SELECT (SELECT id 
-		 FROM cte_sel 
-		 WHERE cte_sel.id = L.id 
-          AND (
-			 	(RIGHT(SOUNDEX(cte_sel.misspelled_word),1) LIKE RIGHT(SOUNDEX(@word),1)
-                 AND ld_ratio(@word, cte_sel.misspelled_word) > 75
-                  )
-			 	OR 
-                (RIGHT(SOUNDEX(cte_sel.misspelled_word),1) != RIGHT(SOUNDEX(@word),1)
-                 AND ld(REGEXP_REPLACE(@word, '(d|a|b|s|j)$', ''), 
-                 REGEXP_REPLACE(cte_sel.misspelled_word, '(d|a|b|s|j)$', '')) <= 2
-                 -- AND ld(@word, cte_sel.misspelled_word)  <= 2 
-                 -- AND ld_ratio(@word, cte_sel.misspelled_word) > 75
-                 )
-                )
-          ) AS id
-FROM cte_sel AS L);
+	WHERE -- LEFT(SOUNDEX(misspelled_word),1) = LEFT(SOUNDEX(@word),1)
+    SUBSTR(SOUNDEX(misspelled_word),1,3) = SUBSTR(SOUNDEX(@word),1,3) OR
+    SUBSTR(SOUNDEX(misspelled_word),2,3) = SUBSTR(SOUNDEX(@word),2,3) OR
+    SUBSTR(SOUNDEX(misspelled_word),3,3) = SUBSTR(SOUNDEX(@word),3,3) OR
+    SUBSTR(REVERSE(SOUNDEX(misspelled_word)),1,3) = SUBSTR(REVERSE(SOUNDEX(@word)),1,3) OR
+    SUBSTR(REVERSE(SOUNDEX(misspelled_word)),2,3) = SUBSTR(REVERSE(SOUNDEX(@word)),2,3) OR
+    SUBSTR(REVERSE(SOUNDEX(misspelled_word)),3,3) = SUBSTR(REVERSE(SOUNDEX(@word)),3,3) 
+ ) 
+SELECT id
+FROM cte_sel
+WHERE (ld(@word, misspelled_word) < 3 AND ld_ratio(SOUNDEX(@word),SOUNDEX(misspelled_word)) >75) 
+OR ld_ratio(@word, misspelled_word) > 70);
+
+ 
+
 
 /*
 SELECT *,-- , @word,
