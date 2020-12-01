@@ -1,26 +1,11 @@
-/*
+-- USE misspellings;
+DELIMITER ;
+DROP FUNCTION IF EXISTS dm;
 DROP FUNCTION IF EXISTS ld_1;
-DELIMITER $$
-CREATE FUNCTION ld_1 (s1 VARCHAR( 255 ) , s2 VARCHAR( 255 )) 
-RETURNS TINYINT( 1 ) DETERMINISTIC
-BEGIN
-    DECLARE s1_len, s2_len, i INT;
-    SET s1_len = CHAR_LENGTH(s1), s2_len = CHAR_LENGTH(s2), i = 1;
-    IF s1 = s2 THEN
-        RETURN TRUE;
-    ELSEIF ABS(s1_len - s2_len) > 1 THEN
-        RETURN FALSE;
-    ELSE
-        WHILE SUBSTRING(s1,s1_len - i,1) = SUBSTRING(s2,s2_len - i,1) DO
-            SET i = i + 1;
-        END WHILE;
-        RETURN SUBSTRING(s1,1,s1_len-i) = SUBSTRING(s2,1,s2_len-i) OR SUBSTRING(s1,1,s1_len-i) = SUBSTRING(s2,1,s2_len-i+1) OR SUBSTRING(s1,1,s1_len-i+1) = SUBSTRING(s2,1,s2_len-i);
-    END IF;
-END $$
-DELIMITER;
-*/
-
+DROP FUNCTION IF EXISTS levenshtein_limit_n;
+DROP FUNCTION IF EXISTS lv_leq_1;
 DROP FUNCTION IF EXISTS ld;
+
 DELIMITER $$
 CREATE FUNCTION ld( s1 VARCHAR(255), s2 VARCHAR(255))
   RETURNS INT
@@ -93,6 +78,28 @@ CREATE FUNCTION ld_ratio( s1 VARCHAR(255), s2 VARCHAR(255) )
   END$$
 
 DELIMITER ;
+
+/*
+DROP FUNCTION IF EXISTS ld_1;
+DELIMITER $$
+CREATE FUNCTION ld_1 (s1 VARCHAR( 255 ) , s2 VARCHAR( 255 )) 
+RETURNS TINYINT( 1 ) DETERMINISTIC
+BEGIN
+    DECLARE s1_len, s2_len, i INT;
+    SET s1_len = CHAR_LENGTH(s1), s2_len = CHAR_LENGTH(s2), i = 1;
+    IF s1 = s2 THEN
+        RETURN TRUE;
+    ELSEIF ABS(s1_len - s2_len) > 1 THEN
+        RETURN FALSE;
+    ELSE
+        WHILE SUBSTRING(s1,s1_len - i,1) = SUBSTRING(s2,s2_len - i,1) DO
+            SET i = i + 1;
+        END WHILE;
+        RETURN SUBSTRING(s1,1,s1_len-i) = SUBSTRING(s2,1,s2_len-i) OR SUBSTRING(s1,1,s1_len-i) = SUBSTRING(s2,1,s2_len-i+1) OR SUBSTRING(s1,1,s1_len-i+1) = SUBSTRING(s2,1,s2_len-i);
+    END IF;
+END $$
+DELIMITER;
+*/
 
 
 -- This SQL implements the Double Metaphone algorythm (c) 1998, 1999 by Lawrence Philips
