@@ -27,7 +27,7 @@ SELECT id, misspelled_word ,ld_ratio(@word, misspelled_word)
 FROM ( SELECT *
 		FROM word
 		WHERE  strcmp(SOUNDEX(misspelled_word), SOUNDEX(@word)) <= 1 AND
-              -- RIGHT(SOUNDEX(misspelled_word),1) LIKE RIGHT(SOUNDEX(@word),1) AND
+               RIGHT(SOUNDEX(misspelled_word),1) LIKE RIGHT(SOUNDEX(@word),1) AND
 			  (SUBSTR(misspelled_word,2,2) SOUNDS LIKE SUBSTR(@word,2,2) OR
 			   SUBSTR(REVERSE(misspelled_word),2,2) SOUNDS LIKE SUBSTR(REVERSE(@word),2,2))  
 	 ) AS t 
