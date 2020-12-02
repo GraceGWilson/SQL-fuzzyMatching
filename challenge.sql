@@ -23,31 +23,35 @@
 -- 'immediately'.
 -- 'pumpkin'
 
-SELECT id, misspelled_word , ld_ratio(@word, misspelled_word)
+SELECT id, misspelled_word 
 FROM ( SELECT *
 		FROM word
-		WHERE  SUBSTR(@word,1,3) IN (SUBSTR(misspelled_word,1,3), SUBSTR(misspelled_word,2,3),
-									 SUBSTR(misspelled_word,3,3),SUBSTR(misspelled_word,4,3),SUBSTR(misspelled_word,4,5)) OR
-			   SUBSTR(@word,2,3) IN (SUBSTR(misspelled_word,1,3), SUBSTR(misspelled_word,2,3),
-									 SUBSTR(misspelled_word,3,3),SUBSTR(misspelled_word,4,3),SUBSTR(misspelled_word,5,3)) OR
-				SUBSTR(@word,3,3) IN (SUBSTR(misspelled_word,1,3), SUBSTR(misspelled_word,2,3),
-									 SUBSTR(misspelled_word,3,3),SUBSTR(misspelled_word,4,3),SUBSTR(misspelled_word,5,3)) OR
-				SUBSTR(@word,4,3) IN (SUBSTR(misspelled_word,1,3), SUBSTR(misspelled_word,2,3),
-									 SUBSTR(misspelled_word,3,3),SUBSTR(misspelled_word,4,3),SUBSTR(misspelled_word,5,3)) OR
-				SUBSTR(@word,5,3) IN (SUBSTR(misspelled_word,1,3), SUBSTR(misspelled_word,2,3),
-									 SUBSTR(misspelled_word,3,3),SUBSTR(misspelled_word,4,3),SUBSTR(misspelled_word,5,3)) OR
-               SUBSTR(REVERSE(@word),1,3) IN (SUBSTR(REVERSE(misspelled_word),1,3),SUBSTR(REVERSE(misspelled_word),2,3), 
-                                              SUBSTR(REVERSE(misspelled_word),3,3),SUBSTR(REVERSE(misspelled_word),4,3),SUBSTR(REVERSE(misspelled_word),5,3)) OR
-			   SUBSTR(REVERSE(@word),2,3) IN (SUBSTR(REVERSE(misspelled_word),1,3),SUBSTR(REVERSE(misspelled_word),2,3), 
-                                              SUBSTR(REVERSE(misspelled_word),3,3),SUBSTR(REVERSE(misspelled_word),4,3),SUBSTR(REVERSE(misspelled_word),5,3)) OR 	
-			   SUBSTR(REVERSE(@word),3,3) IN (SUBSTR(REVERSE(misspelled_word),1,3),SUBSTR(REVERSE(misspelled_word),2,3), 
-                                              SUBSTR(REVERSE(misspelled_word),3,3),SUBSTR(REVERSE(misspelled_word),4,3),SUBSTR(REVERSE(misspelled_word),5,3)) OR
-			   SUBSTR(REVERSE(@word),4,3) IN (SUBSTR(REVERSE(misspelled_word),1,3),SUBSTR(REVERSE(misspelled_word),2,3), 
-                                              SUBSTR(REVERSE(misspelled_word),3,3),SUBSTR(REVERSE(misspelled_word),4,3),SUBSTR(REVERSE(misspelled_word),5,3)) OR
-				SUBSTR(REVERSE(@word),3,3) IN (SUBSTR(REVERSE(misspelled_word),1,3),SUBSTR(REVERSE(misspelled_word),2,3), 
-                                              SUBSTR(REVERSE(misspelled_word),3,3),SUBSTR(REVERSE(misspelled_word),4,3),SUBSTR(REVERSE(misspelled_word),5,3)) 
+		WHERE  SUBSTR(@word,1,3) IN (SUBSTR(misspelled_word,1,3), SUBSTR(misspelled_word,2,3),SUBSTR(misspelled_word,3,3),
+									 SUBSTR(misspelled_word,4,3),SUBSTR(misspelled_word,4,5),SUBSTR(misspelled_word,6,3)) OR
+			   SUBSTR(@word,2,3) IN (SUBSTR(misspelled_word,1,3), SUBSTR(misspelled_word,2,3),SUBSTR(misspelled_word,3,3),
+									 SUBSTR(misspelled_word,4,3),SUBSTR(misspelled_word,5,3),SUBSTR(misspelled_word,6,3)) OR
+				SUBSTR(@word,3,3) IN (SUBSTR(misspelled_word,1,3), SUBSTR(misspelled_word,2,3),SUBSTR(misspelled_word,3,3),
+									 SUBSTR(misspelled_word,4,3),SUBSTR(misspelled_word,5,3),SUBSTR(misspelled_word,6,3)) OR
+				SUBSTR(@word,4,3) IN (SUBSTR(misspelled_word,1,3), SUBSTR(misspelled_word,2,3),SUBSTR(misspelled_word,3,3),
+									 SUBSTR(misspelled_word,4,3),SUBSTR(misspelled_word,5,3),SUBSTR(misspelled_word,6,3)) OR
+				SUBSTR(@word,5,3) IN (SUBSTR(misspelled_word,1,3), SUBSTR(misspelled_word,2,3),SUBSTR(misspelled_word,3,3),
+									 SUBSTR(misspelled_word,4,3),SUBSTR(misspelled_word,5,3),SUBSTR(misspelled_word,6,3)) OR
+				SUBSTR(@word,6,3) IN (SUBSTR(misspelled_word,1,3), SUBSTR(misspelled_word,2,3), SUBSTR(misspelled_word,3,3),
+									 SUBSTR(misspelled_word,4,3),SUBSTR(misspelled_word,5,3), SUBSTR(misspelled_word,6,3)) OR
+               SUBSTR(REVERSE(@word),1,3) IN (SUBSTR(REVERSE(misspelled_word),1,3),SUBSTR(REVERSE(misspelled_word),2,3),SUBSTR(REVERSE(misspelled_word),3,3), 
+                                              SUBSTR(REVERSE(misspelled_word),4,3),SUBSTR(REVERSE(misspelled_word),5,3),SUBSTR(REVERSE(misspelled_word),6,3)) OR
+			   SUBSTR(REVERSE(@word),2,3) IN (SUBSTR(REVERSE(misspelled_word),1,3),SUBSTR(REVERSE(misspelled_word),2,3), SUBSTR(REVERSE(misspelled_word),3,3),
+                                             SUBSTR(REVERSE(misspelled_word),4,3),SUBSTR(REVERSE(misspelled_word),5,3),SUBSTR(REVERSE(misspelled_word),6,3)) OR 	
+			   SUBSTR(REVERSE(@word),3,3) IN (SUBSTR(REVERSE(misspelled_word),1,3),SUBSTR(REVERSE(misspelled_word),2,3), SUBSTR(REVERSE(misspelled_word),3,3),
+                                              SUBSTR(REVERSE(misspelled_word),4,3),SUBSTR(REVERSE(misspelled_word),5,3),SUBSTR(REVERSE(misspelled_word),6,3)) OR
+			   SUBSTR(REVERSE(@word),4,3) IN (SUBSTR(REVERSE(misspelled_word),1,3),SUBSTR(REVERSE(misspelled_word),2,3), SUBSTR(REVERSE(misspelled_word),3,3),
+                                              SUBSTR(REVERSE(misspelled_word),4,3),SUBSTR(REVERSE(misspelled_word),5,3),SUBSTR(REVERSE(misspelled_word),6,3)) OR
+				SUBSTR(REVERSE(@word),5,3) IN (SUBSTR(REVERSE(misspelled_word),1,3),SUBSTR(REVERSE(misspelled_word),2,3), SUBSTR(REVERSE(misspelled_word),3,3),
+                                              SUBSTR(REVERSE(misspelled_word),4,3),SUBSTR(REVERSE(misspelled_word),5,3),SUBSTR(REVERSE(misspelled_word),6,3)) OR
+				SUBSTR(REVERSE(@word),6,3) IN (SUBSTR(REVERSE(misspelled_word),1,3),SUBSTR(REVERSE(misspelled_word),2,3), SUBSTR(REVERSE(misspelled_word),3,3),
+                                              SUBSTR(REVERSE(misspelled_word),4,3),SUBSTR(REVERSE(misspelled_word),5,3),SUBSTR(REVERSE(misspelled_word),6,3))
 	 ) AS t 
-WHERE EXISTS (SELECT id FROM word as w where w.id = t.id AND ld_ratio(@word, misspelled_word) > 60); 
+WHERE EXISTS (SELECT id FROM word as w where w.id = t.id AND ld_ratio(@word, misspelled_word) >= 60); 
 
 -- ORDER BY ld_ratio(@word, misspelled_word) DESC;
 
