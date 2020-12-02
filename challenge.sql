@@ -14,24 +14,27 @@
 -- You can uncomment this for testing, but leave it commented out
 -- when you submit your script. The system will set this variable to 
 -- various target words when scoring your query.
- -- SET @word = 'accomodation';
+ -- SET @word = 'calculate';
 
--- calculate
+-- calculate (8)
 -- commission
 -- alcoholical
 -- 'accomodation'
 -- 'immediately'.
 -- 'pumpkin'
 
-SELECT id, misspelled_word ,ld_ratio(@word, misspelled_word)
+SELECT id, misspelled_word ,ld_ratio(@word, misspelled_word), SOUNDEX(@word), SOUNDEX(misspelled_word), ld(SOUNDEX(@word),SOUNDEX(misspelled_word))
 FROM ( SELECT *
 		FROM word
-		WHERE  strcmp(SOUNDEX(misspelled_word), SOUNDEX(@word)) <= 1 AND
-              -- RIGHT(SOUNDEX(misspelled_word),1) LIKE RIGHT(SOUNDEX(@word),1) AND
-			  (SUBSTR(misspelled_word,2,2) SOUNDS LIKE SUBSTR(@word,2,2) OR
-			   SUBSTR(REVERSE(misspelled_word),2,2) SOUNDS LIKE SUBSTR(REVERSE(@word),2,2))  
+		WHERE   ABS(CHAR_LENGTH(SOUNDEX(@word))-CHAR_LENGTH(SOUNDEX(misspelled_word))) < 2 AND
+			   (SUBSTR(@word,1,3) IN (SUBSTR(misspelled_word,1,3), SUBSTR(misspelled_word,2,3),
+									 SUBSTR(misspelled_word,3,3),SUBSTR(misspelled_word,4,3)) OR
+				SUBSTR(@word,2,3) IN (SUBSTR(misspelled_word,1,3), SUBSTR(misspelled_word,2,3),
+									 SUBSTR(misspelled_word,3,3),SUBSTR(misspelled_word,4,3)) OR
+               SUBSTR(REVERSE(@word),1,3) IN (SUBSTR(REVERSE(misspelled_word),1,3),SUBSTR(REVERSE(misspelled_word),2,3), 
+                                              SUBSTR(REVERSE(misspelled_word),3,3),SUBSTR(REVERSE(misspelled_word),4,3)))
 	 ) AS t 
-WHERE EXISTS (SELECT id FROM word as w where w.id = t.id AND ld_ratio(@word, misspelled_word) >= 80)
+WHERE EXISTS (SELECT id FROM word as w where w.id = t.id AND ld_ratio(@word, misspelled_word) >= 70) 
 ORDER BY ld_ratio(@word, misspelled_word) DESC;
 
 /*
