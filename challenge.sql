@@ -23,10 +23,10 @@
 -- 'immediately'.
 -- 'pumpkin'
 
-SELECT id, misspelled_word ,ld_ratio(@word, misspelled_word), SOUNDEX(@word), SOUNDEX(misspelled_word), ld(SOUNDEX(@word),SOUNDEX(misspelled_word))
+SELECT id, misspelled_word 
 FROM ( SELECT *
 		FROM word
-		WHERE   ABS(CHAR_LENGTH(SOUNDEX(@word))-CHAR_LENGTH(SOUNDEX(misspelled_word))) < 2 AND
+		WHERE   ABS(CHAR_LENGTH(SOUNDEX(@word))-CHAR_LENGTH(SOUNDEX(misspelled_word))) < 2 AND 
 			   (SUBSTR(@word,1,3) IN (SUBSTR(misspelled_word,1,3), SUBSTR(misspelled_word,2,3),
 									 SUBSTR(misspelled_word,3,3),SUBSTR(misspelled_word,4,3)) OR
 				SUBSTR(@word,2,3) IN (SUBSTR(misspelled_word,1,3), SUBSTR(misspelled_word,2,3),
@@ -34,8 +34,8 @@ FROM ( SELECT *
                SUBSTR(REVERSE(@word),1,3) IN (SUBSTR(REVERSE(misspelled_word),1,3),SUBSTR(REVERSE(misspelled_word),2,3), 
                                               SUBSTR(REVERSE(misspelled_word),3,3),SUBSTR(REVERSE(misspelled_word),4,3)))
 	 ) AS t 
-WHERE EXISTS (SELECT id FROM word as w where w.id = t.id AND ld_ratio(@word, misspelled_word) >= 70) 
-ORDER BY ld_ratio(@word, misspelled_word) DESC;
+WHERE EXISTS (SELECT id FROM word as w where w.id = t.id AND ld_ratio(@word, misspelled_word) >= 60); 
+-- ORDER BY ld_ratio(@word, misspelled_word) DESC;
 
 /*
 SELECT id, misspelled_word
