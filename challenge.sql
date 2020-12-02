@@ -32,11 +32,15 @@ FROM ( SELECT *
 									 SUBSTR(misspelled_word,3,3),SUBSTR(misspelled_word,4,3)) OR
 				SUBSTR(@word,3,3) IN (SUBSTR(misspelled_word,1,3), SUBSTR(misspelled_word,2,3),
 									 SUBSTR(misspelled_word,3,3),SUBSTR(misspelled_word,4,3)) OR
+				SUBSTR(@word,4,3) IN (SUBSTR(misspelled_word,1,3), SUBSTR(misspelled_word,2,3),
+									 SUBSTR(misspelled_word,3,3),SUBSTR(misspelled_word,4,3)) OR
                SUBSTR(REVERSE(@word),1,3) IN (SUBSTR(REVERSE(misspelled_word),1,3),SUBSTR(REVERSE(misspelled_word),2,3), 
                                               SUBSTR(REVERSE(misspelled_word),3,3),SUBSTR(REVERSE(misspelled_word),4,3)) OR
 			   SUBSTR(REVERSE(@word),2,3) IN (SUBSTR(REVERSE(misspelled_word),1,3),SUBSTR(REVERSE(misspelled_word),2,3), 
                                               SUBSTR(REVERSE(misspelled_word),3,3),SUBSTR(REVERSE(misspelled_word),4,3)) OR 	
 			   SUBSTR(REVERSE(@word),3,3) IN (SUBSTR(REVERSE(misspelled_word),1,3),SUBSTR(REVERSE(misspelled_word),2,3), 
+                                              SUBSTR(REVERSE(misspelled_word),3,3),SUBSTR(REVERSE(misspelled_word),4,3)) OR
+			   SUBSTR(REVERSE(@word),4,3) IN (SUBSTR(REVERSE(misspelled_word),1,3),SUBSTR(REVERSE(misspelled_word),2,3), 
                                               SUBSTR(REVERSE(misspelled_word),3,3),SUBSTR(REVERSE(misspelled_word),4,3))
 	 ) AS t 
 WHERE EXISTS (SELECT id FROM word as w where w.id = t.id AND ld_ratio(@word, misspelled_word) > 60); 
