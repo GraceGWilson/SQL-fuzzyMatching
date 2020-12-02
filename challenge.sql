@@ -14,7 +14,7 @@
 -- You can uncomment this for testing, but leave it commented out
 -- when you submit your script. The system will set this variable to 
 -- various target words when scoring your query.
--- SET @word = 'divide';
+-- SET @word = 'pumpkin';
 
 -- calculate
 -- comision
@@ -23,13 +23,13 @@
 -- 'immediately'.
 -- 'pumpkin'
 
-SELECT id, misspelled_word -- ,ld_ratio(@word, misspelled_word)
+SELECT id, misspelled_word ,ld_ratio(@word, misspelled_word)
 FROM ( SELECT *
 		FROM word
 		WHERE  strcmp(SOUNDEX(misspelled_word), SOUNDEX(@word)) <= 1 AND
-              RIGHT(SOUNDEX(misspelled_word),1) LIKE RIGHT(SOUNDEX(@word),1) AND
+              -- RIGHT(SOUNDEX(misspelled_word),1) LIKE RIGHT(SOUNDEX(@word),1) AND
 			  (SUBSTR(misspelled_word,2,2) SOUNDS LIKE SUBSTR(@word,2,2) OR
-			  SUBSTR(REVERSE(misspelled_word),2,2) SOUNDS LIKE SUBSTR(REVERSE(@word),2,2))  
+			   SUBSTR(REVERSE(misspelled_word),2,2) SOUNDS LIKE SUBSTR(REVERSE(@word),2,2))  
 	 ) AS t 
 WHERE EXISTS (SELECT id FROM word as w where w.id = t.id AND ld_ratio(@word, misspelled_word) >= 68);
 -- ORDER BY ld_ratio(@word, misspelled_word) DESC;
