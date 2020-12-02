@@ -26,7 +26,7 @@
 SELECT id, misspelled_word 
 FROM ( SELECT *
 		FROM word
-		WHERE   ABS(CHAR_LENGTH(SOUNDEX(@word))-CHAR_LENGTH(SOUNDEX(misspelled_word))) < 2 AND 
+		WHERE   ABS(CHAR_LENGTH(SOUNDEX(@word))-CHAR_LENGTH(SOUNDEX(misspelled_word))) <= 2 AND 
 			   (SUBSTR(@word,1,3) IN (SUBSTR(misspelled_word,1,3), SUBSTR(misspelled_word,2,3),
 									 SUBSTR(misspelled_word,3,3),SUBSTR(misspelled_word,4,3)) OR
 				SUBSTR(@word,2,3) IN (SUBSTR(misspelled_word,1,3), SUBSTR(misspelled_word,2,3),
