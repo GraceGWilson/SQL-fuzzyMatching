@@ -14,10 +14,10 @@
 -- You can uncomment this for testing, but leave it commented out
 -- when you submit your script. The system will set this variable to 
 -- various target words when scoring your query.
--- SET @word = 'pumpkin';
+ -- SET @word = 'accomodation';
 
 -- calculate
--- comision
+-- commission
 -- alcoholical
 -- 'accomodation'
 -- 'immediately'.
@@ -31,6 +31,11 @@ FROM ( SELECT *
 			  (SUBSTR(misspelled_word,2,2) SOUNDS LIKE SUBSTR(@word,2,2) OR
 			   SUBSTR(REVERSE(misspelled_word),2,2) SOUNDS LIKE SUBSTR(REVERSE(@word),2,2))  
 	 ) AS t 
-WHERE EXISTS (SELECT id FROM word as w where w.id = t.id AND ld_ratio(@word, misspelled_word) >= 68);
--- ORDER BY ld_ratio(@word, misspelled_word) DESC;
+WHERE EXISTS (SELECT id FROM word as w where w.id = t.id AND ld_ratio(@word, misspelled_word) >= 80)
+ORDER BY ld_ratio(@word, misspelled_word) DESC;
 
+/*
+SELECT id, misspelled_word
+  FROM word 
+ WHERE misspelled_word SOUNDS LIKE @word;
+ */
