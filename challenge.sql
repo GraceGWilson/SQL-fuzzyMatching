@@ -9,12 +9,12 @@
 
 -- You can uncomment this for testing, but leave it commented out
 -- when you submit your script.
- USE misspellings;
+ -- USE misspellings;
 
 -- You can uncomment this for testing, but leave it commented out
 -- when you submit your script. The system will set this variable to 
 -- various target words when scoring your query.
- SET @word = 'calculate';
+ -- SET @word = 'calculate';
 
 -- calculate (8)
 -- commission
@@ -57,11 +57,3 @@ FROM ( SELECT *
 											   SUBSTR(REVERSE(misspelled_word),5,3),SUBSTR(REVERSE(misspelled_word),6,3),SUBSTR(REVERSE(misspelled_word),7,3)) 
 	 ) AS t 
 WHERE EXISTS (SELECT id FROM word as w where w.id = t.id AND ld_ratio(@word, misspelled_word) >= 65); 
-
--- ORDER BY ld_ratio(@word, misspelled_word) DESC;
-
-/*
-SELECT id, misspelled_word
-  FROM word 
- WHERE misspelled_word SOUNDS LIKE @word;
- */
