@@ -50,4 +50,4 @@ FROM ( SELECT *, SUBSTR(misspelled_word,1,3) AS mf1, SUBSTR(misspelled_word,2,3)
 		SUBSTR(REVERSE(@word),7,3) IN (mr1, mr2, mr3, mr4, mr5, mr6, mr7, mr8) OR
       		SUBSTR(REVERSE(@word),8,3) IN (mr1, mr2, mr3, mr4, mr5, mr6, mr7, mr8)
 	 ) AS t 
-WHERE EXISTS (SELECT id FROM word as w where w.id = t.id AND ld_ratio(@word, misspelled_word) >= 59); 
+WHERE EXISTS (SELECT id FROM word as w where w.id = t.id AND ld_ratio(@word, misspelled_word) >= 60); 
