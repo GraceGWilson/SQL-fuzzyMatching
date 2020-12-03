@@ -28,10 +28,10 @@ FROM ( SELECT *, SUBSTR(misspelled_word,1,3) AS mf1, SUBSTR(misspelled_word,2,3)
       		SUBSTR(misspelled_word,3,3) AS mf3, SUBSTR(misspelled_word,4,3) AS mf4, 
       		SUBSTR(misspelled_word,4,3) AS mf5, SUBSTR(misspelled_word,6,3) AS mf6,
                 SUBSTR(misspelled_word,7,3) AS mf7, SUBSTR(misspelled_word,8,3) AS mf8,
-      		SUBSTR(REVERSE(misspelled_word),1,3) AS mr1,SUBSTR(REVERSE(misspelled_word),2,3) AS mr2,
+      		SUBSTR(REVERSE(misspelled_word),1,3) AS mr1, SUBSTR(REVERSE(misspelled_word),2,3) AS mr2,
                 SUBSTR(REVERSE(misspelled_word),3,3) AS mr3, SUBSTR(REVERSE(misspelled_word),4,3) AS mr4,
                 SUBSTR(REVERSE(misspelled_word),5,3) AS mr5, SUBSTR(REVERSE(misspelled_word),6,3) AS mr6, 
-      		SUBSTR(REVERSE(misspelled_word),6,3) AS mr7, SUBSTR(REVERSE(misspelled_word),8,3) AS mr8,
+      		SUBSTR(REVERSE(misspelled_word),6,3) AS mr7, SUBSTR(REVERSE(misspelled_word),8,3) AS mr8
 	FROM word
 	HAVING @word SOUNDS LIKE misspelled_word OR
 		SUBSTR(@word,1,3) IN (mf1, mf2, mf3, mf4, mf5, mf6, mf7,mf8) OR
