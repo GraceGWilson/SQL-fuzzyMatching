@@ -55,12 +55,12 @@ FROM ( SELECT *, SUBSTR(misspelled_word,1,2) AS mf1, SUBSTR(misspelled_word,2,2)
 		 SUBSTR(REVERSE(@word),6,2) IN (mr4, mr5, mr6, mr7, mr8) OR
 		 SUBSTR(REVERSE(@word),7,2) IN (mr5, mr6, mr7, mr8, mr9) OR
       		 SUBSTR(REVERSE(@word),8,2) IN (mr6, mr7, mr8, mr9, mr10) OR
-      		 SUBSTR(REVERSE(@word),9,2) IN (mr6, mr8, mr9, mr10, mr11) OR
-      		 SUBSTR(REVERSE(@word),10,2) IN (mr8, mr9, mr10, mr11, mr12)
+      		 SUBSTR(REVERSE(@word),9,2) IN (mr6, mr8, mr9, mr10, mr11) 
+      		 -- SUBSTR(REVERSE(@word),10,2) IN (mr8, mr9, mr10, mr11, mr12)
 	 ) AS t 
-WHERE EXISTS (SELECT id FROM word as w where w.id = t.id AND ld_ratio(SOUNDEX(@word), SOUNDEX(misspelled_word)) >= 69)
+WHERE EXISTS (SELECT id FROM word as w where w.id = t.id AND ld_ratio(SOUNDEX(@word), SOUNDEX(misspelled_word)) >= 67)
 )
 SELECT * 
 FROM CTE
-WHERE EXISTS (SELECT id FROM word as w where w.id = CTE.id AND ld_ratio(@word, misspelled_word) >= 50); 
+WHERE EXISTS (SELECT id FROM word as w where w.id = CTE.id AND ld_ratio(@word, misspelled_word) >= 52); 
 									      
