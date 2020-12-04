@@ -1,3 +1,5 @@
 word,f,precision,recall,retrieved,relevant,total relevant,time
 "mysql: [Warning] Using a password on the command line interface can be insecure.
-ERROR 1054 (42S22) at line 26: Unknown column 'mmr4' in 'having clause'"
+ERROR 1064 (42000) at line 26: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ',
+		SUBSTR(@word,1,2) IN (mf1, mf2, mf3) OR
+		SUBSTR(@word,2,2) IN (mf1, mf2, mf' at line 15"
