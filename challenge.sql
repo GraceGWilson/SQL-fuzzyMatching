@@ -51,7 +51,7 @@ FROM ( SELECT *, SUBSTR(misspelled_word,1,2) AS mf1, SUBSTR(misspelled_word,2,2)
 		 SUBSTR(REVERSE(@word),3,2) IN (mr1, mr2, mr3, mr4, mr5) OR
 		 SUBSTR(REVERSE(@word),4,2) IN (mr2, mr3, mr4, mr5, mr6) OR
 		 SUBSTR(REVERSE(@word),5,2) IN (mr3, mr4, mr5, mr6, mr7) OR
-		 SUBSTR(REVERSE(@word),6,2) IN (mr4, mr5, mr6, mr7, mr8) 
+		 SUBSTR(REVERSE(@word),6,2) IN (mr4, mr5, mr6, mr7, mr8) OR
 		 SUBSTR(REVERSE(@word),7,2) IN (mr5, mr6, mr7, mr8, mr9) OR
       		 SUBSTR(REVERSE(@word),8,2) IN (mr6, mr7, mr8, mr9, mr10)
       		-- SUBSTR(REVERSE(@word),9,2) IN (mr6, mr8, mr9, mr10, mr11) OR
