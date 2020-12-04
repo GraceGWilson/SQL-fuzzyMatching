@@ -38,8 +38,8 @@ FROM ( SELECT *, SUBSTR(misspelled_word,1,2) AS mf1, SUBSTR(misspelled_word,2,2)
       		SUBSTR(REVERSE(misspelled_word),11,2) AS mr11,SUBSTR(REVERSE(misspelled_word),12,2) AS mr12,
       		SOUNDEX(misspelled_word) AS sm, SOUNDEX(@word) AS sw
 	FROM word
-	HAVING  sw REGEXP '^.sm' OR
-      		sm REGEXP'^.sw' OR
+	HAVING  soundex_match(@word, misspelled_word,' ') == 1 OR
+      		soundex_match(@word, misspelled_word,'-') == 1 OR
       		-- @word SOUNDS LIKE misspelled_word OR
 		SUBSTR(@word,1,2) IN (mf1, mf2, mf3) OR
 		SUBSTR(@word,2,2) IN (mf1, mf2, mf3, mf4) OR
