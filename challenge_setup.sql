@@ -74,6 +74,51 @@ CREATE FUNCTION ld_ratio( s1 VARCHAR(255), s2 VARCHAR(255) )
   END$$
 DELIMITER ;
 
+-- If any word in the haystack sounds similar to the needle, the function will return 1. Otherwise it returns 0.
+DROP FUNCTION IF EXISTS soundex_match;
+DELIMITER $$
+CREATE FUNCTION `soundex_match`(needle varchar(128), haystack text, splitChar varchar(1)) 
+ RETURNS tinyint(4)
+ DETERMINISTIC
+ BEGIN
+     declare spacePos int;
+     declare searchLen int default 0;
+     declare curWord varchar(128) default '';
+     declare tempStr text default haystack;
+     declare tmp text default '';
+     declare soundx1 varchar(64) default '';
+     declare soundx2 varchar(64) default '';    
+
+    set searchLen = length(haystack);
+     set spacePos  = locate(splitChar, tempStr);
+     set soundx1   = soundex(needle);
+
+    while searchLen > 0 do
+       if spacePos = 0 then
+         set tmp = tempStr;
+         select soundex(tmp) into soundx2;
+         if soundx1 = soundx2 then
+           return 1;
+         else
+           return 0;
+         end if;
+       else
+         set tmp = substr(tempStr, 1, spacePos-1);
+         set soundx2 = soundex(tmp);
+         if soundx1 = soundx2 then
+           return 1;
+         end if;
+
+        set tempStr = substr(tempStr, spacePos+1);
+         set searchLen = length(tempStr);
+       end if;      
+
+      set spacePos = locate(splitChar, tempStr);
+     end while;  
+
+    return 0;
+ END $$
+DELIMITER ;
 /*
 DROP FUNCTION IF EXISTS ld_1;
 DELIMITER $$
