@@ -52,5 +52,5 @@ WHERE EXISTS (SELECT id FROM word as w where w.id = t.id AND ld_ratio(SOUNDEX(@w
 )
 SELECT * 
 FROM CTE
-WHERE EXISTS (SELECT id FROM word as w where w.id = CTE.id AND ld(@word, misspelled_word) < 4); 
+WHERE EXISTS (SELECT id FROM word as w where w.id = CTE.id AND ld(@word, misspelled_word) < 7); 
 									      
